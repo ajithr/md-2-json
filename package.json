@@ -1,0 +1,25 @@
+{
+  "name": "md-2-json",
+  "version": "1.0.1",
+  "description": "Markdown to JSON convertor",
+  "main": "index.js",
+  "keywords": [
+    "md-to-json",
+    "markdown",
+    "markdown-to-json",
+    "md2json",
+    "md-2-json",
+    "mdjson",
+    "json",
+    "parser"
+  ],
+  "author": "ajithr",
+  "license": "MIT",
+  "dependencies": {
+    "marked": "^0.3.6"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ajithr/md-2-json.git"
+  }
+}
