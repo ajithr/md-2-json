@@ -1,6 +1,6 @@
 {
   "name": "md-2-json",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Markdown to JSON convertor",
   "main": "index.js",
   "keywords": [
@@ -16,7 +16,8 @@
   "author": "ajithr",
   "license": "MIT",
   "dependencies": {
-    "marked": "^0.3.6"
+    "marked": "^0.3.6",
+    "traverse": "^0.6.6"
   },
   "repository": {
     "type": "git",

@@ -2,10 +2,12 @@
 
 var fs = require('fs');
 var marked = require('marked');
+var traverse = require('traverse');
 
 var parse = function(mdContent) {
     var json = marked.lexer(mdContent);
-    var currentHeading, headings = [];
+    var currentHeading, headings = [],
+        isOrdered = true;
     var output = json.reduce(function(result, item, index, array) {
         switch (item.type) {
             case 'heading':
@@ -22,8 +24,12 @@ var parse = function(mdContent) {
                     currentHeading = currentHeading[item.text];
                 }
                 break;
+            case 'list_start':
+                isOrdered = item.ordered;
+                break;
             case 'text':
-                var text = '- ' + item.text + '\n';
+                var ordered = isOrdered ? '1. ' : '- ';
+                var text = ordered + item.text + '\n';
                 currentHeading.raw = currentHeading.raw ? currentHeading.raw + text : text;
                 break;
             case 'table':
@@ -51,8 +57,8 @@ exports.parse = parse;
 
 function getParentHeading(headings, item, result) {
     var parent, index = item.depth - 1;
-    var curreHeading = headings[index];
-    if (curreHeading) {
+    var currentHeading = headings[index];
+    if (currentHeading) {
         headings.splice(index, headings.length - index);
     }
     headings.push(item.text);
@@ -86,4 +92,26 @@ function getTableContent(item) {
         }
     }
     return '| ' + tableHeader + '\n|: ' + separator + '\n| ' + tableContent + '\n';
+}
+
+function toMd(jsonObject) {
+    var mdText = '';
+    traverse(jsonObject).reduce(function(acc, value) {
+        if (this.isLeaf && this.key === 'raw') {
+            mdText += value;
+        } else {
+            mdText += getHash(this.level) + ' ' + this.key + '\n\n';
+        }
+        return;
+    });
+    return mdText;
+}
+exports.toMd = toMd;
+
+function getHash(level) {
+    var hash = '';
+    for (var i = 0; i < level; i++) {
+        hash += '#';
+    }
+    return hash;
 }

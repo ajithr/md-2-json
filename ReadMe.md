@@ -4,7 +4,7 @@ A simple library to convert markdown content to JSON object.
 
 ## Usage
 
-Simple content
+### Simple content
 
 ```js
 
@@ -20,7 +20,7 @@ md2json.parse('This is a markdown content');
 
 ```
 
-Multiline Content
+### Multiline Content
 
 ```js
 
@@ -48,6 +48,32 @@ md2json.parse(mdContent);
         }
     }
 }
+*/
+
+```
+
+### Converting JSON to MD string
+
+The method `toMd` can be used to convert the JSON Object to Markdown string.
+
+```js
+
+var md2json = require('md-2-json');
+var json = {
+    "Heading 1": {
+        raw: "This is a para\n",
+    }
+}
+
+md2json.toMd(json);
+
+/* output
+`
+# Heading 1
+
+This is a para
+
+`
 */
 
 ```
