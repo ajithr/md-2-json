@@ -43,7 +43,7 @@ var parse = function(mdContent) {
                 if (!currentHeading) {
                     currentHeading = result;
                 }
-                var para = item.text + '\n';
+                var para = checkNextLine(item.text);
                 currentHeading.raw = currentHeading.raw ? currentHeading.raw + para : para;
                 break;
             default:
@@ -90,8 +90,17 @@ function getTableContent(item) {
         for (var j = 0; j < cells.length; j++) {
             tableContent += cells[j] + ' | ';
         }
+        var sep = i !== item.cells.length - 1 ? '| ' : '';
+        tableContent += '\n' + sep;
     }
     return '| ' + tableHeader + '\n|: ' + separator + '\n| ' + tableContent + '\n';
+}
+
+function checkNextLine(mdText) {
+    if (!mdText.endsWith('\n\n')) {
+        mdText += '\n\n';
+    }
+    return mdText;
 }
 
 function toMd(jsonObject) {
