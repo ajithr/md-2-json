@@ -5,7 +5,8 @@ var marked = require('marked');
 var traverse = require('traverse');
 
 var parse = function(mdContent) {
-    var json = marked.lexer(mdContent);
+    var aligned = getAlignedContent(mdContent);
+    var json = marked.lexer(aligned);
     var currentHeading, headings = [],
         isOrdered = true;
     var output = json.reduce(function(result, item, index, array) {
@@ -27,17 +28,31 @@ var parse = function(mdContent) {
             case 'list_start':
                 isOrdered = item.ordered;
                 break;
+            case 'list_end':
+                if (currentHeading.raw) {
+                    currentHeading.raw = checkNextLine(currentHeading.raw);
+                }
+                break;
             case 'text':
                 var ordered = isOrdered ? '1. ' : '- ';
                 var text = ordered + item.text + '\n';
                 currentHeading.raw = currentHeading.raw ? currentHeading.raw + text : text;
+                break;
+            case 'html':
+                if (!currentHeading) {
+                    currentHeading = result;
+                }
+                var para = checkNextLine(item.text);
+                currentHeading.raw = currentHeading.raw ? currentHeading.raw + para : para;
                 break;
             case 'table':
                 var tableContent = getTableContent(item);
                 currentHeading.raw = currentHeading.raw ? currentHeading.raw + tableContent : tableContent;
                 break;
             case 'space':
-                currentHeading.raw = currentHeading.raw ? currentHeading.raw + '\n' : '\n';
+                if (currentHeading) {
+                    currentHeading.raw = currentHeading.raw ? currentHeading.raw + '\n' : '\n';
+                }
                 break;
             case 'paragraph':
                 if (!currentHeading) {
@@ -54,6 +69,22 @@ var parse = function(mdContent) {
     return output;
 }
 exports.parse = parse;
+
+function getAlignedContent(mdContent) {
+    var headings = mdContent.match(/(?:\r\n)#.*$/mg);
+    if(!heading) {
+        return mdContent;
+    }
+    for (var i = 0; i < headings.length; i++) {
+        var heading = headings[i].trim();
+        var propHeading = new RegExp('(?:\r\n){2}' + heading + '.*$', 'mg');
+        if(!mdContent.match(propHeading)) {
+            var wrongHeading = new RegExp('(?:\r\n)' + heading + '.*$', 'mg');
+            mdContent = mdContent.replace(wrongHeading, '\r\n\r\n' + heading);
+        }
+    }
+    return mdContent;
+}
 
 function getParentHeading(headings, item, result) {
     var parent, index = item.depth - 1;
@@ -83,7 +114,20 @@ function getTableContent(item) {
         tableHeader += item.header[i] + ' | ';
     }
     for (var i = 0; i < item.align.length; i++) {
-        separator += '---------:| ';
+        switch (item.align[i]) {
+            case "right":
+                separator += '--:|';
+                break;
+            case "left":
+                separator += ':--|';
+                break;
+            case "center":
+                separator += ':-:|';
+                break;
+            default:
+                separator += '---|';
+                break;
+        }
     }
     for (var i = 0; i < item.cells.length; i++) {
         var cells = item.cells[i];
@@ -93,11 +137,10 @@ function getTableContent(item) {
         var sep = i !== item.cells.length - 1 ? '| ' : '';
         tableContent += '\n' + sep;
     }
-    return '| ' + tableHeader + '\n|: ' + separator + '\n| ' + tableContent + '\n';
+    return '| ' + tableHeader + '\n|' + separator + '\n| ' + tableContent + '\n';
 }
-
 function checkNextLine(mdText) {
-    if (!mdText.endsWith('\n\n')) {
+    if (mdText && !mdText.endsWith('\n\n')) {
         mdText += '\n\n';
     }
     return mdText;
