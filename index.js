@@ -49,6 +49,10 @@ var parse = function(mdContent) {
                 var tableContent = getTableContent(item);
                 currentHeading.raw = currentHeading.raw ? currentHeading.raw + tableContent : tableContent;
                 break;
+            case 'code':
+                var codeContent = getCodeContent(item);
+                currentHeading.raw = currentHeading.raw ? currentHeading.raw + codeContent : codeContent;
+                break;
             case 'space':
                 if (currentHeading) {
                     currentHeading.raw = currentHeading.raw ? currentHeading.raw + '\n' : '\n';
@@ -139,6 +143,18 @@ function getTableContent(item) {
     }
     return '| ' + tableHeader + '\n|' + separator + '\n| ' + tableContent + '\n';
 }
+
+function getCodeContent(item) {
+  var open = "```";
+  if (item.lang) {
+    open = open + item.lang;
+  }
+
+  var content = item.text;
+  var close = "```";
+  return checkNextLine([open, content, close].join("\n"));
+}
+
 function checkNextLine(mdText) {
     if (mdText && !mdText.endsWith('\n\n')) {
         mdText += '\n\n';
