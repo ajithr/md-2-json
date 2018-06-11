@@ -8,7 +8,8 @@ var parse = function(mdContent) {
     var aligned = getAlignedContent(mdContent);
     var json = marked.lexer(aligned);
     var currentHeading, headings = [],
-        isOrdered = true;
+        isOrdered = true,
+        orderedDepth = 1;
     var output = json.reduce(function(result, item, index, array) {
         switch (item.type) {
             case 'heading':
@@ -27,6 +28,7 @@ var parse = function(mdContent) {
                 break;
             case 'list_start':
                 isOrdered = item.ordered;
+                orderedDepth = item.start;
                 break;
             case 'list_end':
                 if (currentHeading.raw) {
@@ -34,7 +36,13 @@ var parse = function(mdContent) {
                 }
                 break;
             case 'text':
-                var ordered = isOrdered ? '1. ' : '- ';
+                if (isOrdered) {
+                  var ordered = orderedDepth + ". ";
+                  orderedDepth++;
+                }
+                else {
+                  var ordered = '- ';
+                }
                 var text = ordered + item.text + '\n';
                 currentHeading.raw = currentHeading.raw ? currentHeading.raw + text : text;
                 break;
