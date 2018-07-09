@@ -84,7 +84,7 @@ exports.parse = parse;
 
 function getAlignedContent(mdContent) {
     var headings = mdContent.match(/(?:\r\n)#.*$/mg);
-    if(!heading) {
+    if(!headings) {
         return mdContent;
     }
     for (var i = 0; i < headings.length; i++) {
