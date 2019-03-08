@@ -2,6 +2,14 @@
 
 A simple library to convert markdown content to JSON object.
 
+## Install
+
+Install with [npm](https://www.npmjs.com/):
+
+```sh
+$ npm install --save md-2-json
+```
+
 ## Usage
 
 ### Simple content
