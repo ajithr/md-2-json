@@ -1,6 +1,5 @@
 'use strict';
 
-var fs = require('fs');
 var marked = require('marked');
 var traverse = require('traverse');
 
