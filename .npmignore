@@ -1,0 +1,4 @@
+.vscode/
+spec/
+package-lock.json
+jasmine.json
