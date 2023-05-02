@@ -21,7 +21,7 @@ var parse = function (mdContent) {
                 var parentHeading = getParentHeading(headings, item, result);
                 headings = parentHeading.headings;
                 currentHeading = parentHeading.parent;
-                currentHeading[item.text] = {};
+                currentHeading[item.text] = currentHeading[item.text] || {};
                 currentHeading = currentHeading[item.text];
             }
         }
