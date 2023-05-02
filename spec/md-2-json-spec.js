@@ -39,7 +39,7 @@ describe("md-2-json unit testing", () => {
         };
         expect(result).toEqual(expected);
     });
-    it("multiple headers", () => {
+    it("duplicate headers", () => {
         var result = PARSE(NESTED_AND_DUPLICATE_HEADERS);
         var expected = { 
             "Heading1": { 
