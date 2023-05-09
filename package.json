@@ -16,7 +16,7 @@
   "author": "ajithr",
   "license": "MIT",
   "dependencies": {
-    "marked": "^2.0.3",
+    "marked": "^5.0.0",
     "traverse": "^0.6.6"
   },
   "repository": {

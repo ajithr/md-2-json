@@ -12,6 +12,15 @@ Testing2
 
 ### Heading3
 Testing3`;
+const NESTED_AND_DUPLICATE_HEADERS = `# Heading1
+## Duplicate Heading 
+Testing Duplicate 1
+## Duplicate Heading
+Testing Duplicate 2`;
+const DUPLICATE_ROOT_HEADERS = `# ROOTHEADER
+this should not be erased.
+# ROOTHEADER
+this will not over write previous body of ROOTHEADER.`;
 
 describe("md-2-json unit testing", () => {
     it("simple content", () => {
@@ -30,6 +39,26 @@ describe("md-2-json unit testing", () => {
                         raw: "Testing3" 
                     }
                 } 
+            }
+        };
+        expect(result).toEqual(expected);
+    });
+    it("duplicate headers", () => {
+        var result = PARSE(NESTED_AND_DUPLICATE_HEADERS);
+        var expected = { 
+            "Heading1": { 
+                "Duplicate Heading":{
+                    raw: "Testing Duplicate 1\nTesting Duplicate 2",
+                },
+            }
+        };
+        expect(result).toEqual(expected);
+    });
+    it("duplicate root headers", () => {
+        var result = PARSE(DUPLICATE_ROOT_HEADERS);
+        var expected = { 
+            "ROOTHEADER": { 
+                raw: "this should not be erased.\nthis will not over write previous body of ROOTHEADER."
             }
         };
         expect(result).toEqual(expected);
