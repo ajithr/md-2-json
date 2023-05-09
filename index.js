@@ -14,7 +14,7 @@ var parse = function (mdContent) {
         if (item.type == 'heading') {
             if (!currentHeading || item.depth == 1) {
                 headings = [];
-                result[item.text] = {};
+                result[item.text] = result[item.text] || {};
                 currentHeading = result[item.text];
                 headings.push(item.text);
             } else {
